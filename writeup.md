@@ -61,7 +61,23 @@
   I decided to tune the hyperparameters manually because I tried to adjust them automatically but every time the car
 left the track I had to restart the simulator.
 
+  The algorithm followed for the tunning is the following:
   
+  1. Set **Kd = 0** and **Ki = 0**.
+  2. Try different values for **Kp** until achieve the car response to CTE with a steady oscillation. 
+  I started with **Kp = 0.01** and increasing it.
+  3. Next step is try values for **Kd**. I started with **Kp = 0.5** and increased it until the oscillation disappeared.
+  4. Test the controller driving all the track. If the car left the ciruit go to step 2 again and increment **Kp**. 
+  If the car finish all the circuit go to step 2 deacreasing **Kp**. Repeat the proccess until the behaviour is as smooth
+  as possible.
+  5. Try with different values of **Ki** util get complete the track with the minimum number of oscillations. I started
+  with **ki = 0.05** and then i decrase it. 
+  
+### 3. Future improvements
+  
+  The most inmediate improvement of the algorithm is to add another PID controller for the speed. 
+
+
   
   
 
