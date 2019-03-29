@@ -14,7 +14,7 @@
 
 * **Proportional component Kp.**
 
-  Proportional controller only receive as input the current cross-track error (CTE). 
+  Proportional controller only receives as input the current cross-track error (CTE). 
   The ouput of the controller is the steering angle of the car to try to correcto the CTE. 
   In this way the controller tries to keep the car in a reference trajectory.
   
@@ -22,35 +22,48 @@
   In both of them the components derivative and integral has been canceled (**Kd = 0**, **Ki = 0**).
   *  [**Kp = 1.0**](videos/kp=1.0_ki=0.0_kd=0.0.mp4) With a big value of the proportional the car responses very fast
   to try to correct the CTE, but the overshooting produces a big oscillation effect even before to reach the first turn. 
-  *  [**kp = 0.01**](videos/kp=0.001_ki=0.0_kd=0.0.mp4) If proportional component is too small, the car doesn't oscillate
+  *  [**kp = 0.01**](videos/kp=0.01_ki=0.0_kd=0.0.mp4) If proportional component is too small, the car doesn't oscillate
   too much on the straight part of the track, but it is unable to keep the car on the track as soon the first turn arrives.
  
   The main problem of the proportional controller is the overshooting which generates an oscillation in the trajectory
-  of the vehicle.
+  of the vehicle. It is not possible to keep the car on track only with the proportional component.
 
 * **Derivative component Kd.**  
 
-  First, i used the function **gaussian_blur()** with **kernel_size=3**. After several iterations i found that this value works properly. This value improve the the noise but keeps the lines sufficiently defined.
+  Derivative controller receives as inputs the current value of the CTE and the value of the CTE in a previous time
+  interval. This means that the output of the controller is proporitonal to the rate of change of the CTE. If the CTE
+  remains constat the derivative componente won't have any effect in the vehicle trajectory.
+  
+  In this [**video**](videos/kp=0.0_ki=0.0_kd=5.0.mp4) the proportional and integral components have been cancelled
+  and the derivative term setted to 5.0. It can be observed how the car barely reacts to the CTE error on the straigh
+  part of the track and gradually aproaches to edge of the track. This is effect is due at the low rate of change of the CTE.
+  
+  The derivative controller cannot be used alone, it has to be used in conjuction with the proportional controller
+  to reduce the oscillation of this one.
+  
+  In this [**video**](videos/kp=0.15_ki=0.0_kd=2.75.mp4) the integral component has been cancelled and proportional 
+  and derivative setted to 0.15 and 2.75.
 
-  After that, the function **canny()** with values: **low_threshold=50** and **high_threshold=200**. I obtained these values performing several iterations and observing the result.
-
-  ![alt text][image3]
 
 * **Integral component Ki.**
 
-  ![alt text][image4]
+  Integral controller receives as input the sum of all previous CTE values. Its function is correct systematic bias 
+  errors. 
   
+  This is the [**result**](videos/kp=0.15_ki=0.001_kd=2.75.mp4) of adding the integral component to the previous
+  PD controller. The value of the the integral component is lower than proportional and derivative components because
+  acts over an acumulative error. The effect of setting a big integral value is that the car tends to go straight in
+  the turns.
+   
 
 ### 2. Describe how hyperparameters have been choosen
 
+  I decided to tune the hyperparameters manually because I tried to adjust them automatically but every time the car
+left the track I had to restart the simulator.
 
-The pipeline works fine with all test image and with two test videos.  
+  
+  
+  
 
-With the video **challenge.mp4**, it works too, but it fails when the color of the road is less dark. 
-
-I think the pipeline can fail in some cases such as:
-* Another white/yellow marks painted in the road like arrow, letters an signals.
-* When the road asphalt is not dark enough.
-* When the car approaches to very tight curves.
 
 
